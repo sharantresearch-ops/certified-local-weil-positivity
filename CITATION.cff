@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this certificate or the accompanying paper, please cite it as below."
+title: "Certified Local Weil Positivity for the Riemann Zeta Function in the Even Pole-Moment-Null Sector through Radius 3/5"
+type: software
+authors:
+  - family-names: "Thota"
+    given-names: "Sharan"
+version: 1.0.0
+date-released: 2026-08-10
+repository-code: "https://github.com/sharantresearch-ops/certified-local-weil-positivity"
+url: "https://github.com/sharantresearch-ops/certified-local-weil-positivity/tree/v1.0.0"
