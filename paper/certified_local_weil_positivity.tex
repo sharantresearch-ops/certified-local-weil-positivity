@@ -1,0 +1,1054 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools,mathrsfs}
+\usepackage[a4paper,margin=30mm]{geometry}
+\usepackage{array}
+\usepackage{xurl}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!55!black,
+            citecolor=blue!55!black,urlcolor=blue!55!black]{hyperref}
+\hypersetup{
+  pdftitle={Certified Local Weil Positivity for the Riemann Zeta Function in the Even Pole-Moment-Null Sector through Radius 3/5},
+  pdfauthor={Sharan Thota}
+}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator{\Dom}{Dom}
+
+\setlength{\emergencystretch}{3em}
+
+\begin{document}
+
+\title{Certified Local Weil Positivity for the Riemann Zeta Function
+in the Even Pole-Moment-Null Sector through Radius \(3/5\)}
+\author{Sharan Thota}
+\date{}
+
+\maketitle
+
+\begin{abstract}
+We study the compactly supported Weil quadratic form associated with the Riemann zeta function after restriction to even functions whose \(\cosh(x/2)\)-moment vanishes.
+For a support radius \(a\), its Fourier multiplier consists of the archimedean digamma term and the prime-power atoms with \(\log n<2a\).
+We prove, with a reproducible interval-arithmetic certificate,
+that the resulting closed form satisfies
+\[
+        T_a[f]\geq \frac{3}{100000}\,\lVert f\rVert_2^2
+        \qquad (0<a\leq 3/5).
+\]
+At the endpoint, the arithmetic part contains exactly the atoms \(n=2,3\).
+The proof is an infinite-dimensional estimate, not a finite-section Ritz calculation.
+We split the form into a compact adverse operator and a positive favorable form,
+retain a trace-class part of the favorable form,
+and control the discarded directions by a matrix-valued Schur estimate.
+A rank-44 interval \(LDL^{*}\) certificate then gives the stated rational gap.
+We also prove a general completeness theorem for this positive-rescue scheme,
+derive an exact positive-background Poisson-frame representation,
+and record the corresponding normalized shorted-graph Loewner inequality.
+The result is local in the support radius; the all-radius positivity criterion,
+which is equivalent to the Riemann hypothesis, is not asserted.
+\end{abstract}
+
+\medskip
+\noindent\textbf{2020 Mathematics Subject Classification.} 11M26, 47A07, 47B65, 65G40.
+
+\smallskip
+\noindent\textbf{Keywords.} Weil's criterion, Riemann zeta function,
+localized quadratic form, validated numerics, interval arithmetic, Poisson frame, Schur complement.
+
+\section{Introduction}
+\label{pub-sec-introduction}
+
+Let \(\Lambda\) denote the von Mangoldt function and \(\psi=\Gamma'/\Gamma\) the digamma function.
+For \(a>0\), the compact-support explicit formula leads to the real multiplier
+\begin{equation}
+ b_a(t)=
+ \operatorname{Re}\psi\!\left(\frac14+\frac{it}{2}\right)-\log\pi
+ -2\sum_{1<n<e^{2a}}\frac{\Lambda(n)}{\sqrt n}
+       \cos(t\log n).
+ \label{pub-eq-symbol-intro}
+\end{equation}
+The finite sum changes only when \(2a\) crosses the logarithm of a prime power.
+This makes fixed-support positivity a natural local problem:
+it retains exact arithmetic coefficients while involving only finitely many prime-power translations.
+
+The purpose of this paper is to establish a strict local theorem after the first two arithmetic atoms have entered.
+The principal result is the following.
+All notation is defined in Section~\ref{pub-sec-weil-form}.
+
+\begin{theorem}[Prime-inclusive local coercivity]
+\label{pub-thm-main}
+For every \(0<a\leq3/5\), the closed form \(T_a\) on the complex-even,
+\(\cosh(x/2)\)-moment-null space satisfies
+\begin{equation}
+       T_a[f]\geq\frac{3}{100000}\lVert f\rVert_2^2,
+       \qquad f\in\mathcal Q_a^0.
+\label{pub-eq-main-bound}
+\end{equation}
+At \(a=3/5\), the prime-power sum in \eqref{pub-eq-symbol-intro} contains exactly \(n=2\) and \(n=3\).
+\end{theorem}
+
+The proof has three parts.
+First, a projected cosine-frame representation turns multiplication by the negative part of the symbol into a positive trace-class operator.
+Second, a favorable, sign-certified portion of the positive part is retained without discarding its orientation relative to the adverse operator.
+A matrix Schur estimate controls the infinite orthogonal complement by trace tails.
+Third, outward-rounded Arb arithmetic verifies the resulting finite matrix inequalities and every scalar sign decision.
+Exact zero-extension then transfers the endpoint bound to all smaller supports,
+including across the thresholds \((\log2)/2\) and \((\log3)/2\).
+
+The finite-dimensional space in the certificate is used only to bound the complement of a trace-class operator.
+No smallest eigenvalue of a compression of \(T_a\) is used as a lower bound for the continuum form;
+such a use would have the wrong variational direction.
+
+The connection with the Riemann hypothesis is contextual rather than a claim of this paper.
+Weil's positivity criterion, in its localized Hermitian-form version,
+identifies the Riemann hypothesis with positivity for every support radius.
+Theorem~\ref{pub-thm-main} supplies one explicit initial interval of radii and therefore does not settle the all-radius problem.
+
+The localization of Weil's quadratic form was initiated by Yoshida,
+who proved positivity for sufficiently small support and reduced the problem to finite calculations on suitable localized spaces.
+Bombieri subsequently developed the associated variational problem and recorded the classical calculation at the prime-free radius \(a=(\log 2)/2\) \cite{Yoshida1992,Bombieri2000,Bombieri2003}.
+Connes and Consani gave an operator-theoretic explanation of the archimedean inequality at that scale and later reported numerical semi-local evidence across successive arithmetic thresholds \cite{ConnesConsani2021,ConnesConsani2023}.
+Suzuki constructed the localized Friedrichs operator and proved continuity of its lowest eigenvalue,
+but his unconditional positivity theorem remains qualitative for sufficiently small \(a\) \cite{Suzuki2023,Suzuki2026}.
+Recent finite-element and finite-Galerkin studies provide detailed numerical or finite-dimensional information,
+but not a lower bound for the exact infinite-dimensional pole-moment-null continuum form \cite{KimEtAl2026,Groskin2026}.
+
+To the author's knowledge, Theorem~\ref{pub-thm-main} is the first explicit rigorous continuum lower bound in the even pole-moment-null sector at a support radius beyond the \(n=3\) entry threshold.
+This comparison is restricted to that sector;
+it does not concern Suzuki's unrestricted localized operator or the all-radius problem.
+
+The paper is organized as follows.
+Section~\ref{pub-sec-weil-form} fixes the Fourier normalization, form domain, and all-radius criterion.
+Section~\ref{pub-sec-cosine-frame} gives the exact projected cosine kernel.
+Section~\ref{pub-sec-rescue} proves the abstract positive-rescue estimates.
+Section~\ref{pub-sec-certificate} gives the complete theorem-bearing certificate at \(a=3/5\).
+Section~\ref{pub-sec-nesting} proves inward nesting,
+Section~\ref{pub-sec-poisson-frame} gives the exact grouped Poisson frame,
+and Section~\ref{pub-sec-shorting} records the shorted-form consequence.
+Reproduction data appear in Appendix~\ref{pub-sec-reproduction}.
+
+\section{The local Weil form}
+\label{pub-sec-weil-form}
+
+\subsection{Fourier normalization and the moment constraint}
+
+Write \(I_a=(-a,a)\), and identify every function on \(I_a\) with its zero extension to \(\mathbb R\).
+We use
+\begin{equation}
+ \widehat f(t)=\int_{-a}^{a}f(x)e^{-itx}\,dx,
+ \qquad
+ \lVert f\rVert_2^2=\frac1{2\pi}
+        \int_{\mathbb R}|\widehat f(t)|^2\,dt.
+ \label{pub-eq-fourier-normalization}
+\end{equation}
+Let
+\begin{equation}
+ \mathcal V_a^0=
+ \left\{f\in L^2(I_a;\mathbb C):
+ f(-x)=f(x)\ \text{a.e.},\quad
+ \int_{-a}^{a}f(x)\cosh(x/2)\,dx=0\right\}.
+ \label{pub-eq-moment-space}
+\end{equation}
+For an even function the odd \(\sinh(x/2)\)-moment vanishes, and hence
+\begin{equation}
+ \widehat f(i/2)=\widehat f(-i/2)=0
+ \quad\Longleftrightarrow\quad
+ \int_{-a}^{a}f(x)\cosh(x/2)\,dx=0.
+ \label{pub-eq-two-poles-one-moment}
+\end{equation}
+Thus the single condition in \eqref{pub-eq-moment-space} removes both pole terms from the even restriction of the Weil form.
+
+Put
+\begin{equation}
+ g_\infty(t)=
+ \operatorname{Re}\psi\!\left(\frac14+\frac{it}{2}\right)-\log\pi.
+ \label{pub-eq-g-infty}
+\end{equation}
+Since \(g_\infty(t)=\log(2+|t|)+O(1)\),
+while the arithmetic part of \eqref{pub-eq-symbol-intro} is bounded for fixed \(a\),
+the natural closed form domain is
+\begin{equation}
+ \mathcal Q_a^0=
+ \left\{f\in\mathcal V_a^0:
+ \int_{\mathbb R}\log(2+|t|)|\widehat f(t)|^2\,dt<\infty\right\}.
+ \label{pub-eq-form-domain}
+\end{equation}
+On this domain define
+\begin{equation}
+ T_a[f,g]=\frac1{2\pi}\int_{\mathbb R}
+     b_a(t)\widehat f(t)\overline{\widehat g(t)}\,dt,
+ \qquad T_a[f]=T_a[f,f].
+ \label{pub-eq-local-form}
+\end{equation}
+The form is densely defined, closed, and bounded below.
+Including an atom with \(\log n=2a\) does not alter the compressed form:
+the corresponding translation meets the support only on a null set.
+
+\subsection{The all-radius criterion}
+
+The following proposition fixes the precise relation between the local problem and the classical Weil criterion.
+It is included to delimit the scope of Theorem~\ref{pub-thm-main}.
+
+\begin{proposition}[Even local Weil criterion]
+\label{pub-prop-rh-equivalence}
+The Riemann hypothesis is equivalent to
+\begin{equation}
+ T_a[f]\geq0
+ \quad\text{for every }a>0\text{ and every }f\in\mathcal Q_a^0.
+ \label{pub-eq-rh-all-radius}
+\end{equation}
+It is enough to quantify over smooth functions compactly supported in \(I_a\) and satisfying the moment condition.
+\end{proposition}
+
+\begin{proof}
+In the compact-support explicit formula of Weil and Yoshida \cite{Weil1952,Yoshida1992},
+the non-pole Fourier multiplier is exactly \eqref{pub-eq-symbol-intro}.
+Equation \eqref{pub-eq-two-poles-one-moment} removes the two pole evaluations.
+Under the Riemann hypothesis,
+the zero side of the Hermitian form is a sum of nonnegative squares,
+which proves \eqref{pub-eq-rh-all-radius}.
+
+Conversely, the localized interpolation theorem for the Weil form allows one to prescribe the pole zeros and to isolate an off-critical zero orbit.
+After conjugation and even symmetrization,
+an off-line quartet yields a negative real-even test,
+while the other zero evaluations can be made arbitrarily small.
+The resulting Paley--Wiener function has some finite exponential type and therefore comes from a test supported in \((-a,a)\) for a finite \(a\).
+This contradicts \eqref{pub-eq-rh-all-radius}.
+Density of the smooth moment-null core in \(\mathcal Q_a^0\) gives the closed-form statement.
+See \cite{Yoshida1992,Bombieri2000} for the localized Hermitian form and interpolation formulation.
+\end{proof}
+
+\begin{remark}
+Proposition~\ref{pub-prop-rh-equivalence} quantifies over all \(a>0\).
+No converse from positivity on a single bounded interval of radii is used or claimed.
+\end{remark}
+
+\section{Projected cosine frames}
+\label{pub-sec-cosine-frame}
+
+Let \(m_a(x)=\cosh(x/2)\), and let \(P_a^0\) be the orthogonal projection from the even subspace of \(L^2(I_a)\) onto \(m_a^\perp\).
+For \(t\geq0\) put
+\begin{equation}
+       v_{a,t}=P_a^0\cos(tx).
+\label{pub-eq-projected-feature}
+\end{equation}
+For \(f\in\mathcal V_a^0\), evenness and the moment constraint give
+\begin{equation}
+       \widehat f(t)=\langle f,v_{a,t}\rangle.
+\label{pub-eq-analysis-feature}
+\end{equation}
+Consequently, if \(w\geq0\) is integrable and compactly supported, then
+\begin{equation}
+ K_{a,w}=\frac1\pi\int_0^\infty
+       w(t)|v_{a,t}\rangle\langle v_{a,t}|\,dt
+\label{pub-eq-frame-operator}
+\end{equation}
+is positive and trace class, with
+\begin{equation}
+ \langle K_{a,w}f,f\rangle=\frac1\pi\int_0^\infty
+       w(t)|\widehat f(t)|^2\,dt,
+ \qquad
+ \Tr K_{a,w}=\frac1\pi\int_0^\infty
+       w(t)\lVert v_{a,t}\rVert^2\,dt.
+ \label{pub-eq-frame-form-trace}
+\end{equation}
+
+The kernel needed by the certificate is elementary.
+With \(\sinc z=\sin z/z\), continuously extended at zero,
+\begin{align}
+ \lVert m_a\rVert_2^2&=a+\sinh a,
+ \label{pub-eq-moment-norm}\\
+ \langle m_a,\cos(tx)\rangle
+ &=2\frac{\frac12\sinh(a/2)\cos(at)
+       +t\cosh(a/2)\sin(at)}{t^2+1/4},
+ \label{pub-eq-moment-cosine}\\
+ \langle v_{a,s},v_{a,t}\rangle
+ &=a\{\sinc(a(s-t))+
+       \sinc(a(s+t))\}
+ \notag\\
+ &\hspace{1cm}-
+ \frac{\langle m_a,\cos(sx)\rangle
+       \langle m_a,\cos(tx)\rangle}{a+\sinh a}.
+ \label{pub-eq-projected-kernel}
+\end{align}
+These identities make both the Gram matrix and all operator compressions amenable to rigorous interval integration.
+
+\section{Positive rescue and a matrix Schur estimate}
+\label{pub-sec-rescue}
+
+\subsection{The canonical split}
+
+Let \(b\) be any real multiplier satisfying \(b(t)\to+\infty\), fix \(\mu>0\), and set
+\begin{equation}
+ w=(\mu-b)_+,
+ \qquad d=(b-\mu)_+.
+\label{pub-eq-positive-negative-split}
+\end{equation}
+On a projected cosine space as above, let
+\begin{equation}
+ A=K_w,
+ \qquad
+ D[f]=\frac1\pi\int_0^\infty d(t)|\widehat f(t)|^2\,dt.
+\label{pub-eq-adverse-favorable}
+\end{equation}
+Then \(A\) is positive trace class, \(D\) is a closed positive form,
+and the multiplier form has the exact decomposition
+\begin{equation}
+             T=\mu I-A+D.
+\label{pub-eq-canonical-rescue-split}
+\end{equation}
+If \(C\) is positive trace class and \(0\preceq C\preceq D\) in form sense, then
+\begin{equation}
+             T\succeq\mu I-(A-C).
+\label{pub-eq-retained-rescue}
+\end{equation}
+
+\subsection{The matrix residual}
+
+We first isolate the operator-theoretic estimate used in the certificate.
+
+\begin{lemma}[Schur residual]
+\label{pub-lem-schur-residual}
+Let \(S=S^*\) be bounded, let \(P\) be an orthogonal projection, and put \(Q=I-P\).
+Write
+\[
+ D_P=PSP,\qquad X=QSP,\qquad E=QSQ.
+\]
+Suppose that \(E\preceq\delta Q\) and \(X^*X\preceq R_P\),
+where \(R_P\succeq0\) acts on \(P\mathcal H\).
+If \(\lambda>\delta\) and
+\begin{equation}
+ \lambda P-D_P-\frac{R_P}{\lambda-\delta}\succeq0,
+\label{pub-eq-schur-residual-condition}
+\end{equation}
+then \(S\preceq\lambda I\).
+\end{lemma}
+
+\begin{proof}
+Relative to \(P\mathcal H\oplus Q\mathcal H\),
+\[
+ \lambda I-S=
+ \begin{pmatrix}
+   \lambda P-D_P&-X^*\\
+   -X&\lambda Q-E
+ \end{pmatrix}.
+\]
+The lower-right block is at least \((\lambda-\delta)Q\).
+Its inverse is therefore at most \((\lambda-\delta)^{-1}Q\),
+and its Schur complement is bounded below by the left side of \eqref{pub-eq-schur-residual-condition}.
+The Schur complement criterion proves the assertion.
+\end{proof}
+
+\begin{theorem}[Positive-pair matrix residual]
+\label{pub-thm-positive-pair}
+Let \(A,C\succeq0\) be trace-class operators, set \(S=A-C\),
+and let \(P+Q=I\) be an orthogonal decomposition.
+Put
+\begin{equation}
+ \tau_A=\Tr(QAQ),
+ \qquad \tau_C=\Tr(QCQ).
+\label{pub-eq-trace-tails}
+\end{equation}
+For \(\eta>0\), define on \(P\mathcal H\)
+\begin{equation}
+ R_\eta=(1+\eta)\tau_A PAP
+      +(1+\eta^{-1})\tau_C PCP.
+\label{pub-eq-matrix-residual}
+\end{equation}
+If \(\lambda>\tau_A\) and
+\begin{equation}
+ \lambda P-P(A-C)P-\frac{R_\eta}{\lambda-\tau_A}\succeq0,
+\label{pub-eq-positive-pair-lmi}
+\end{equation}
+then \(A-C\preceq\lambda I\).
+\end{theorem}
+
+\begin{proof}
+For every positive block operator \(B\), Douglas factorization \cite{Douglas1966} gives
+\begin{equation}
+ (QBP)^*(QBP)\preceq\lVert QBQ\rVert PBP
+ \preceq\Tr(QBQ)PBP.
+\label{pub-eq-positive-block-factorization}
+\end{equation}
+Apply this to \(A\) and \(C\).
+Matrix Young's inequality gives
+\[
+ [Q(A-C)P]^*[Q(A-C)P]
+ \preceq(1+\eta)(QAP)^*(QAP)
+ +(1+\eta^{-1})(QCP)^*(QCP)
+ \preceq R_\eta.
+\]
+Moreover, \(Q(A-C)Q\preceq QAQ\preceq\tau_AQ\).
+The conclusion follows from Lemma~\ref{pub-lem-schur-residual}.
+\end{proof}
+
+\subsection{Completeness at a fixed support}
+
+The next theorem explains why bounded positive rescues and finite projectors do not create an obstruction at a fixed radius where strict coercivity already holds.
+It is a completeness statement for the proof scheme,
+not an independent positivity theorem.
+
+\begin{theorem}[Exhaustion of an unbounded favorable form]
+\label{pub-thm-rescue-completeness}
+Let \(A\succeq0\) be compact, let \(D\) be a closed positive form,
+and let \(C_R\succeq0\) be compact operators increasing monotonically to \(D\) in form sense.
+Define
+\begin{equation}
+ s_*=sup_{\substack{f\in\Dom D^{1/2}\\\lVert f\rVert=1}}
+       \bigl(\langle Af,f\rangle-D[f]\bigr),
+ \qquad
+ \lambda_R=\sup\sigma(A-C_R).
+\label{pub-eq-completeness-quantities}
+\end{equation}
+If the Hilbert space is infinite dimensional, then
+\begin{equation}
+                \lambda_R\downarrow\max(0,s_*).
+\label{pub-eq-completeness-limit}
+\end{equation}
+In particular, if \(\mu I-A+D\succeq cI\) for some \(\mu,c>0\),
+then \(\lambda_R<\mu\) for all sufficiently large \(R\).
+\end{theorem}
+
+\begin{proof}
+Monotonicity gives \(\lambda_R\downarrow\ell\geq0\),
+because \(A-C_R\) is compact and hence \(0\) lies in its spectrum.
+The form inequality \(C_R\preceq D\) gives \(\ell\geq\max(0,s_*)\).
+
+Suppose \(\ell>0\), choose \(R_n\to\infty\), and let \(f_n\) be unit top eigenvectors.
+After passage to a subsequence, \(f_n\rightharpoonup f\).
+Since \(C_{R_n}\succeq0\), \(\langle Af_n,f_n\rangle\geq\lambda_{R_n}\to\ell\).
+Compactness of \(A\) implies \(f\neq0\).
+For fixed \(R_k\) and sufficiently large \(n\),
+\[
+ \lambda_{R_n}\leq
+ \langle Af_n,f_n\rangle-\langle C_{R_k}f_n,f_n\rangle.
+\]
+Compactness of \(A\) and \(C_{R_k}\), followed by monotone form convergence in \(k\), yields
+\[
+ \ell\leq\langle Af,f\rangle-D[f]
+ \leq s_*\lVert f\rVert^2\leq s_*.
+\]
+Thus \(\ell=s_*>0\).
+When \(\ell=0\), the preceding lower bound already gives \(\max(0,s_*)=0\),
+proving \eqref{pub-eq-completeness-limit}.
+Finally, strict coercivity gives \(s_*\leq\mu-c\), so the limit is strictly below \(\mu\).
+\end{proof}
+
+\begin{corollary}[Finite-projector completeness]
+\label{pub-cor-finite-projector-completeness}
+Under the final hypothesis of Theorem~\ref{pub-thm-rescue-completeness},
+assume moreover that \(A\) and the selected \(C_R\) are trace class,
+and choose \(R\) so that \(\lambda_R<\mu\).
+If \(P_N\uparrow I\) are finite-rank orthogonal projections,
+then the trace tails in Theorem~\ref{pub-thm-positive-pair} tend to zero and its finite LMI certifies a bound strictly below \(\mu\) for all sufficiently large \(N\).
+\end{corollary}
+
+\begin{proof}
+For the trace-class operators \(A\) and \(C_R\),
+\(\Tr((I-P_N)A(I-P_N))\to0\) and likewise for \(C_R\).
+Since \(A-C_R\) is compact, \(P_N(A-C_R)P_N\to A-C_R\) in norm.
+The residual in \eqref{pub-eq-matrix-residual} therefore tends to zero,
+and the finite Schur test converges to the strict inequality \(\lambda_R<\mu\).
+\end{proof}
+
+\section{The certified endpoint \texorpdfstring{\(a=3/5\)}{a=3/5}}
+\label{pub-sec-certificate}
+
+\subsection{The exact arithmetic cell}
+
+Set \(a_0=3/5\).
+Rigorous interval evaluation gives
+\begin{equation}
+             \log3<\frac65<\log4.
+\label{pub-eq-cell-inequalities}
+\end{equation}
+Thus the endpoint symbol is
+\begin{equation}
+ b_{2,3}(t)=g_\infty(t)
+ -\sqrt2\log2\cos(t\log2)
+ -\frac{2\log3}{\sqrt3}\cos(t\log3).
+\label{pub-eq-b23}
+\end{equation}
+Put \(d=1-b_{2,3}\).
+In the notation of \eqref{pub-eq-canonical-rescue-split},
+\begin{equation}
+ T_{a_0}=I-A+C_{\mathrm{full}},
+ \qquad A=K_{a_0,d_+},
+ \qquad C_{\mathrm{full}}=K_{a_0,(-d)_+}.
+\label{pub-eq-endpoint-full-split}
+\end{equation}
+
+The retained rescue \(C\preceq C_{\mathrm{full}}\) is obtained by restricting \((-d)_+\) to the following union \(J\) of exact rational intervals:
+\begin{equation}
+\begin{split}
+J={}&[60382193/20000000,\,380082633/100000000]\\
+&\cup[39235217/3125000,\,1573243267/100000000]\\
+&\cup[1908657941/100000000,\,228037531/10000000]\\
+&\cup[23057517/1000000,\,1340114843/50000000]\\
+&\cup[184766397/6250000,\,3362720043/100000000]\\
+&\cup[717875089/20000000,\,4443581909/100000000].
+\end{split}
+\label{pub-eq-rescue-cores}
+\end{equation}
+Interval subdivision proves \(d<0\) throughout each component of \(J\), so
+\begin{equation}
+ C=K_{a_0,(-d)\mathbf1_J}
+ \qquad\text{satisfies}\qquad 0\preceq C\preceq C_{\mathrm{full}}.
+\label{pub-eq-retained-C}
+\end{equation}
+
+\subsection{Complete sign and tail control}
+
+The derivative of the archimedean term has the positive expansion
+\begin{equation}
+ g_\infty'(t)=\frac t2\sum_{k\geq0}
+ \frac{k+1/4}{((k+1/4)^2+(t/2)^2)^2}>0
+ \qquad(t>0).
+\label{pub-eq-g-derivative}
+\end{equation}
+Using
+\[
+ \sup_{y\geq0}\frac{yu}{(u^2+y^2)^2}
+ =\frac{9}{16\sqrt3}\frac1{u^2},
+ \qquad
+ \sum_{k\geq0}\frac1{(k+1/4)^2}=\pi^2+8G,
+\]
+where \(G\) is Catalan's constant, one obtains the global rationally certified estimate
+\begin{equation}
+ \lVert d'\rVert_\infty
+ \leq\frac{9(\pi^2+8G)}{16\sqrt3}
+ +\sqrt2(\log2)^2+\frac{2(\log3)^2}{\sqrt3}
+ <7.658125<8.
+\label{pub-eq-lipschitz-eight}
+\end{equation}
+
+Outward-rounded interval subdivision on \([0,256]\) produces 27 disjoint rational root brackets,
+each of width \(10^{-10}\), with alternating strict endpoint signs,
+and proves the sign of \(d\) on all 28 complementary intervals.
+The exact list of brackets and the complete subdivision tree are part of the supplementary proof ledger described in Appendix~\ref{pub-sec-reproduction}.
+Formula \eqref{pub-eq-lipschitz-eight} and \(\lVert v_{a_0,t}\rVert^2\leq2a_0=6/5\) bound the total positive operator possibly omitted inside all root brackets by
+\begin{equation}
+ 0\preceq R_{\mathrm{root}}\preceq
+ \varepsilon_{\mathrm{root}}I,
+ \qquad
+ \varepsilon_{\mathrm{root}}<
+ \frac{27\cdot8\cdot(6/5)\cdot10^{-20}}{\pi}
+ <8.250593\times10^{-19}.
+\label{pub-eq-root-charge}
+\end{equation}
+
+Finally, monotonicity of \(g_\infty\) and the elementary bound \(|\cos|\leq1\) give
+\begin{equation}
+ 1-g_\infty(256)+\sqrt2\log2+\frac{2\log3}{\sqrt3}
+ <-0.4584733976219665.
+\label{pub-eq-tail-sign}
+\end{equation}
+Hence \(d(t)<0\) for every \(t\geq256\), and the adverse operator has no unaccounted tail.
+
+\subsection{The rank-44 continuum projection}
+
+Let
+\begin{equation}
+ \xi_j=\frac{(j+1/2)\pi}{a_0}
+      =\frac{5(2j+1)\pi}{6},
+ \qquad 0\leq j<44,
+\label{pub-eq-feature-frequencies}
+\end{equation}
+and define \(V:\mathbb C^{44}\to\mathcal V_{a_0}^0\) by \(Ve_j=v_{a_0,\xi_j}\).
+Put
+\begin{equation}
+ G=V^*V,
+ \qquad P=VG^{-1}V^*,
+ \qquad Q=I-P.
+\label{pub-eq-proof-projection}
+\end{equation}
+The unprojected cosines form an exact orthogonal half-Dirichlet family;
+the moment projection produces the explicitly computable Gram matrix \(G\).
+Interval \(LDL^*\) proves \(G\succ0\), with smallest pivot greater than
+\begin{equation}
+                   0.11996777343402634.
+\label{pub-eq-gram-pivot}
+\end{equation}
+For a positive trace-class operator \(B\), if \(B_P=V^*BV\), then
+\begin{equation}
+              \Tr(PBP)=
+              \Tr(G^{-1}B_P).
+\label{pub-eq-captured-trace}
+\end{equation}
+This identity converts outward enclosures of full traces and inward enclosures of captured traces into rigorous upper bounds for the infinite-dimensional complement.
+
+Let \(A_0\) denote the adverse operator obtained from all sign-certified positive intervals,
+excluding only the root brackets, and write \(B_{A,0}=V^*A_0V\), \(B_C=V^*CV\).
+The interval integrations and trace subtractions give
+\begin{equation}
+\begin{aligned}
+ \Tr A&<4.170131812888502405,\\
+ \Tr(PAP)&>4.170127556767087307,\\
+ \tau_A=\Tr(QAQ)
+   &<4.256121415098\times10^{-6}<1/200000,\\[1mm]
+ \Tr C&<5.040647295020747,\\
+ \Tr(PCP)&>5.040645837226345324,\\
+ \tau_C=\Tr(QCQ)
+   &<1.457794400983\times10^{-6}<1/500000.
+\end{aligned}
+\label{pub-eq-certified-traces}
+\end{equation}
+All subtractions in \eqref{pub-eq-certified-traces} are one-sided:
+the full trace is rounded upward and the captured trace downward.
+The root charge \eqref{pub-eq-root-charge} is added only in the adverse direction.
+
+For
+\begin{equation}
+ \eta=\frac1{16},
+ \qquad
+ \lambda=\frac{99997}{100000},
+ \qquad
+ \bar\tau_A=\frac1{200000},
+ \qquad
+ \bar\tau_C=\frac1{500000},
+\label{pub-eq-lmi-rationals}
+\end{equation}
+define the Gram-coordinate matrix
+\begin{align}
+ \mathcal M={}&
+ \lambda G-(B_{A,0}+\varepsilon_{\mathrm{root}}G-B_C)
+ \notag\\
+ &-\frac{
+ (1+\eta)\bar\tau_A(B_{A,0}+\varepsilon_{\mathrm{root}}G)
+ +(1+\eta^{-1})\bar\tau_CB_C}
+ {\lambda-\bar\tau_A}.
+\label{pub-eq-final-lmi}
+\end{align}
+An outward-rounded interval \(LDL^*\) factorization gives 44 strictly positive pivots,
+the smallest having lower endpoint
+\begin{equation}
+                  0.0097928496566488328.
+\label{pub-eq-final-pivot}
+\end{equation}
+
+\begin{proposition}[Endpoint certificate]
+\label{pub-prop-endpoint-certificate}
+On \(\mathcal Q_{3/5}^0\),
+\begin{equation}
+                 T_{3/5}\succeq\frac3{100000}I.
+\label{pub-eq-endpoint-bound}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+The sign proof gives \(A\preceq A_0+R_{\mathrm{root}}\),
+while \eqref{pub-eq-retained-C} gives \(C\preceq C_{\mathrm{full}}\).
+Thus
+\[
+ T_{3/5}\succeq I-(A-C).
+\]
+Equations \eqref{pub-eq-certified-traces}--\eqref{pub-eq-final-pivot} verify the hypothesis of Theorem~\ref{pub-thm-positive-pair}, so
+\[
+ A-C\preceq\frac{99997}{100000}I.
+\]
+Subtracting this inequality from the identity proves \eqref{pub-eq-endpoint-bound}.
+\end{proof}
+
+\section{Exact inward nesting}
+\label{pub-sec-nesting}
+
+The passage from the endpoint to all smaller supports is exact and does not use numerical continuity in \(a\).
+
+\begin{lemma}[Zero-extension identity]
+\label{pub-lem-zero-extension}
+Let \(0<a\leq a_0\), and let \(f\in\mathcal Q_a^0\).
+If \(f^{\mathrm{ext}}\) denotes its zero extension from \((-a,a)\) to \((-a_0,a_0)\), then
+\begin{equation}
+ \lVert f^{\mathrm{ext}}\rVert_2=\lVert f\rVert_2,
+ \qquad
+ T_{a_0}[f^{\mathrm{ext}}]=T_a[f].
+\label{pub-eq-zero-extension-identity}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Zero extension preserves evenness, the \(\cosh(x/2)\)-moment, the norm, and the Fourier transform.
+It remains to compare the arithmetic sums.
+If an atom \(n\) is active at \(a_0\) but inactive at \(a\), then \(\log n\geq2a\).
+Its contribution to the form is a constant multiple of the correlation of \(f\) with its translate by \(\log n\).
+The two supports are disjoint, except possibly at a null endpoint when \(\log n=2a\),
+so this correlation is zero.
+All other terms agree.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{pub-thm-main}]
+Apply Proposition~\ref{pub-prop-endpoint-certificate} to \(f^{\mathrm{ext}}\) with \(a_0=3/5\),
+and use Lemma~\ref{pub-lem-zero-extension}.
+\end{proof}
+
+\section{An exact positive-background Poisson frame}
+\label{pub-sec-poisson-frame}
+
+The prime-power part of the local symbol can be grouped by primes without losing any coefficient.
+This gives an exact difference of two positive forms and makes the shorted-form consequence in the next section transparent.
+
+Let \(\iota_a:L^2(I_a)\to L^2(\mathbb R)\) be zero extension, let \(U_hf(x)=f(x-h)\), and put
+\begin{equation}
+ X=e^{2a},\qquad h_p=\log p,\qquad r_p=p^{-1/2},\qquad
+ \vartheta(X)=\sum_{p\leq X}\log p.
+\label{pub-eq-poisson-parameters}
+\end{equation}
+Define the compressed Poisson Gramian
+\begin{equation}
+ \Pi_{p,a}=\iota_a^*(1-r_p^2)
+ (I-r_pU_{h_p})^{-*}(I-r_pU_{h_p})^{-1}\iota_a.
+\label{pub-eq-poisson-gramian}
+\end{equation}
+The archimedean positive form is
+\begin{equation}
+ \mathcal J_{\infty,a}[f]=
+ \int_0^\infty\frac{e^{-h/2}}{1-e^{-2h}}
+ \lVert(I-U_h)\iota_af\rVert_2^2\,dh.
+\label{pub-eq-archimedean-jump}
+\end{equation}
+It is understood as a closed form on the logarithmic domain \eqref{pub-eq-form-domain}.
+Put
+\begin{equation}
+ \kappa_a=\vartheta(X)+g_\infty(0),\qquad
+ s\geq\max(0,\kappa_a),\qquad
+ \delta_s=s-\kappa_a,
+\label{pub-eq-background-shift}
+\end{equation}
+and set
+\begin{equation}
+ R_{s,a}=\mathcal J_{\infty,a}+sI,
+ \qquad
+ \mathscr A_{X,s,a}=\delta_sI+
+       \sum_{p\leq X}(\log p)\Pi_{p,a}.
+\label{pub-eq-positive-background-forms}
+\end{equation}
+Both forms in \eqref{pub-eq-positive-background-forms} are positive.
+
+\begin{proposition}[Coefficient-locked Poisson-frame identity]
+\label{pub-prop-poisson-frame}
+On \(\mathcal Q_a^0\),
+\begin{equation}
+                    T_a=R_{s,a}-\mathscr A_{X,s,a}.
+\label{pub-eq-exact-poisson-split}
+\end{equation}
+Moreover, \(\mathscr A_{X,s,a}=F_{s,a}^*F_{s,a}\), where
+\begin{equation}
+ F_{s,a}f=\left(\sqrt{\delta_s}\,f,
+ \left(\sqrt{(\log p)(1-r_p^2)}
+ (I-r_pU_{h_p})^{-1}\iota_af\right)_{p\leq X}\right).
+\label{pub-eq-poisson-analysis-operator}
+\end{equation}
+Thus \eqref{pub-eq-exact-poisson-split} is an exact positive-background frame representation, not a primewise estimate.
+\end{proposition}
+
+\begin{proof}
+The Neumann series of \((I-r_pU_{h_p})^{-1}\) gives the Poisson-kernel identity
+\begin{equation}
+ \langle f,\Pi_{p,a}f\rangle
+ =\lVert f\rVert_2^2+2\sum_{k\geq1}p^{-k/2}
+   \operatorname{Re}\langle\iota_af,U_{kh_p}\iota_af\rangle.
+\label{pub-eq-grouped-prime-tower}
+\end{equation}
+When \(kh_p\geq2a\), the correlation on the right vanishes by disjoint support.
+Multiplication by \(\log p\), followed by summation over \(p\leq X\),
+therefore reproduces exactly the von Mangoldt coefficients of every active prime power in \eqref{pub-eq-symbol-intro}.
+
+The integral representation of the digamma function and Parseval's identity give
+\begin{equation}
+ \frac1{2\pi}\int_{\mathbb R}g_\infty(t)|\widehat f(t)|^2\,dt
+ =\mathcal J_{\infty,a}[f]+g_\infty(0)\lVert f\rVert_2^2.
+\label{pub-eq-digamma-jump-identity}
+\end{equation}
+Combining \eqref{pub-eq-grouped-prime-tower} and \eqref{pub-eq-digamma-jump-identity},
+and using \(s-\delta_s=\vartheta(X)+g_\infty(0)\),
+proves \eqref{pub-eq-exact-poisson-split}.
+Formula \eqref{pub-eq-poisson-analysis-operator} directly gives the stated Gram factorization.
+\end{proof}
+
+\begin{remark}
+Expanding one prime tower and truncating it before compression would introduce a remainder.
+Equation \eqref{pub-eq-grouped-prime-tower} instead groups the entire geometric tower first;
+compact support then annihilates every inactive power exactly.
+\end{remark}
+
+\section{A normalized shorted-form consequence}
+\label{pub-sec-shorting}
+
+For completeness we record the abstract shorted-form consequence that motivates the normalized Loewner formulation.
+It requires no additional arithmetic estimate.
+All spaces and maps in this section are restricted to the certified even space \(\mathcal V_a^0\);
+no assertion is made for odd directions in the full two-pole space.
+
+Let \(T\) be a positive closed form on a Hilbert space \(\mathcal H\),
+with form domain \(\mathcal Q\), and suppose \(T\succeq cI\).
+Let \(P\) be a finite-rank orthogonal projection such that \(P\mathcal Q\subset\mathcal Q\), and put \(E=I-P\).
+For each \(p\in P\mathcal H\),
+Lax--Milgram gives a unique \(e_p\in E\mathcal Q\) such that
+\begin{equation}
+ T[p+e_p,e]=0\qquad(e\in E\mathcal Q).
+\label{pub-eq-minimizing-graph-variational}
+\end{equation}
+Define \(J_Tp=p+e_p\).
+Thus \(PJ_T=I_{P\mathcal H}\), and \(J_Tp\) is the unique form-minimizing lift of \(p\).
+When the relevant block operators are bounded,
+this variational definition agrees with the familiar shorthand
+\begin{equation}
+ J_T=P-E(ETE)^{-1}ETP.
+\label{pub-eq-minimizing-graph}
+\end{equation}
+Define
+\begin{equation}
+ B_G=J_T^*J_T\succeq I,
+ \qquad
+ \Gamma=J_TB_G^{-1/2}.
+\label{pub-eq-normalized-graph}
+\end{equation}
+Then \(\Gamma^*\Gamma=I\).
+
+\begin{corollary}[Normalized shorted-graph Poisson inequality]
+\label{pub-cor-normalized-graph}
+Suppose in addition that \(T=R-\mathscr A\) as closed forms.
+Then
+\begin{equation}
+          \Gamma^*\mathscr A\Gamma+cI
+          \preceq\Gamma^*R\Gamma.
+\label{pub-eq-normalized-loewner}
+\end{equation}
+For the local Weil form and the positive-background decomposition of Proposition~\ref{pub-prop-poisson-frame},
+one may take \(R=R_{s,a}\), \(\mathscr A=\mathscr A_{X,s,a}\),
+and \(c=3/100000\) for every \(0<a\leq3/5\), with all maps defined on \(\mathcal V_a^0\),
+and with \(s\geq\max\{0,\vartheta(e^{2a})+g_\infty(0)\}\).
+In particular,
+\begin{equation}
+ \Gamma_a^*\mathscr A_{X,s,a}\Gamma_a+\frac3{100000}I
+ \preceq\Gamma_a^*R_{s,a}\Gamma_a.
+\label{pub-eq-specific-poisson-loewner}
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+Coercivity gives \(J_T^*TJ_T\succeq cJ_T^*J_T\).
+Congruence by \(B_G^{-1/2}\) yields \(\Gamma^*T\Gamma\succeq cI\).
+Substitute \(T=R-\mathscr A\) and rearrange.
+This is the usual form-short construction; see \cite{AndersonTrapp1975,Kato1995}.
+\end{proof}
+
+\section{Concluding remarks}
+\label{pub-sec-conclusion}
+
+Theorem~\ref{pub-thm-main} establishes strict positivity of the exact prime-inclusive Weil form through \(a=3/5\).
+The proof separates the analytic issue---control of an infinite-dimensional complement---from the finite interval computation.
+Theorem~\ref{pub-thm-rescue-completeness} also shows that,
+at a fixed support where strict coercivity is true,
+a sufficiently large bounded rescue and finite projector can in principle detect it.
+
+Neither result is uniform in the support radius.
+Extending the theorem to all \(a>0\) would require new arithmetic control as further prime-power atoms enter and the low-energy subspace grows.
+By Proposition~\ref{pub-prop-rh-equivalence},
+that all-radius extension is an RH-level problem.
+
+\appendix
+
+\section{Reproduction of the interval certificate}
+\label{pub-sec-reproduction}
+
+The theorem-bearing computation uses Python~3.11.5.
+Its only external dependency is \texttt{python-flint}~0.9.0, linked against FLINT~3.6.0.
+All Arb ball operations use 256-bit working precision.
+The generator uses integration tolerance \(10^{-14}\), an evaluation limit of \(500000\),
+rank \(44\), and exact rational panels of width at most \(1/2\).
+It records every scalar interval, Gram and compression entry, trace enclosure,
+sign subdivision, and \(LDL^*\) pivot in a machine-readable JSON ledger.
+Arb and its midpoint-radius arithmetic are described in \cite{Johansson2017Arb}.
+
+\paragraph{Code and data availability.}
+The paper source, certificate generator, frozen interval ledger,
+and separate validator are available in the \href{https://github.com/sharantresearch-ops/certified-local-weil-positivity}{companion repository}.
+The version corresponding to this paper is archived under \href{https://github.com/sharantresearch-ops/certified-local-weil-positivity/tree/v1.0.0}{tag \texttt{v1.0.0}}.
+The hashes below identify the exact theorem-bearing artifacts.
+
+The supplementary files used for Proposition~\ref{pub-prop-endpoint-certificate} are listed below.
+Each hash is SHA--256; line breaks are typographical only.
+\begin{description}
+\item[\texttt{generator}] \path{certificate/certify.py}\\
+{\scriptsize\ttfamily
+D9C518F4CE80037E1E545AD7B4282811\allowbreak
+9D06A5A53C4F65383A1877E4F7D3BE7D}
+\item[\texttt{ledger}] \path{certificate/ledger.json}\\
+{\scriptsize\ttfamily
+03E81FCA545D184ED320B79E6576ECA7\allowbreak
+73976C274C134FBA0C0859D170E4A4B4}
+\item[\texttt{validator}] \path{certificate/validate.py}\\
+{\scriptsize\ttfamily
+8CA47FC4CE1B603756704888F9BCEB41\allowbreak
+C89DC112585B25326352DFA0BD65756D}
+\item[\texttt{result}] \path{certificate/schur-lmi.json}\\
+{\scriptsize\ttfamily
+BCC3015588E4E5BE9CE34A362D5CCB56\allowbreak
+959B82C12AD1E62381C5F995A2127C10}
+\end{description}
+The postprocessor verifies the canonical theorem-bearing proof payload
+\[
+\text{\scriptsize\ttfamily
+950A5E6D261E548A40AB776D15F67741\allowbreak
+660A9786614E6B000B0CD493378A2285}
+\]
+before replaying the final serialized interval-matrix LMI.
+The generator certifies the root signs, scalar and matrix integrals, Gram positivity,
+and one-sided trace bounds recorded in the ledger.
+The 60-digit interval balls and the ledger hash provide the data required for independent replay.
+
+After cloning the repository and changing to its top-level directory,
+the certificate is reproduced on a POSIX shell by
+\begin{verbatim}
+python -m pip install -r requirements.txt
+mkdir -p build
+python certificate/certify.py \
+  --workers 8 --precision-bits 256 --tolerance 1e-14 \
+  --eval-limit 500000 --json build/fresh-ledger.json
+python certificate/validate.py \
+  --ledger build/fresh-ledger.json \
+  --output build/fresh-schur-lmi.json --precision 256
+\end{verbatim}
+Parallel worker scheduling affects elapsed time but not the canonical proof payload.
+
+\section{Exact data flow for the continuum bound}
+\label{pub-sec-data-flow}
+
+For reference, the logical dependence of the computer-assisted part is
+\[
+\begin{array}{c}
+\text{interval proof of \eqref{pub-eq-cell-inequalities}, signs, and tail}
+\\[1mm]\Downarrow\\[-1mm]
+A\preceq A_0+\varepsilon_{\mathrm{root}}I,
+\quad 0\preceq C\preceq C_{\mathrm{full}}
+\\[1mm]\Downarrow\\[-1mm]
+\text{interval Gram/compression integrals and one-sided trace tails}
+\\[1mm]\Downarrow\\[-1mm]
+\mathcal M\succ0\ \text{by interval }LDL^*
+\\[1mm]\Downarrow\\[-1mm]
+A-C\preceq(99997/100000)I
+\\[1mm]\Downarrow\\[-1mm]
+T_{3/5}\succeq(3/100000)I
+\\[1mm]\Downarrow\\[-1mm]
+T_a\succeq(3/100000)I\quad(0<a\leq3/5).
+\end{array}
+\]
+Every arrow except the three interval-verification steps is proved symbolically in the body of the paper.
+
+\begin{thebibliography}{99}
+
+\bibitem{Weil1952}
+A.~Weil,
+\newblock Sur les ``formules explicites'' de la th\'eorie des nombres
+premiers,
+\newblock in \emph{Comm. S\'em. Math. Univ. Lund, Tome Suppl\'ementaire},
+1952, pp.~252--265.
+\newblock \url{https://cds.cern.ch/record/471308}.
+
+\bibitem{Weil1972}
+A.~Weil,
+\newblock Sur les formules explicites de th\'eorie des nombres,
+\newblock \emph{Math. USSR-Izv.} \textbf{6} (1972), 1--17.
+\newblock \url{https://doi.org/10.1070/IM1972v006n01ABEH001866}.
+
+\bibitem{Yoshida1992}
+H.~Yoshida,
+\newblock On Hermitian forms attached to zeta functions,
+\newblock in \emph{Zeta Functions in Geometry}, Adv. Stud. Pure Math.
+\textbf{21}, Kinokuniya, Tokyo, 1992, pp.~281--325.
+\newblock \url{https://doi.org/10.2969/aspm/02110281}.
+
+\bibitem{Bombieri2000}
+E.~Bombieri,
+\newblock Remarks on Weil's quadratic functional in the theory of prime
+numbers, I,
+\newblock \emph{Rend. Lincei Mat. Appl.} \textbf{11} (2000), 183--233.
+\newblock \url{https://www.bdim.eu/item?id=RLIN_2000_9_11_3_183_0}.
+
+\bibitem{Bombieri2003}
+E.~Bombieri,
+\newblock A variational approach to the explicit formula,
+\newblock \emph{Comm. Pure Appl. Math.} \textbf{56} (2003), 1151--1164.
+\newblock \url{https://doi.org/10.1002/cpa.10089}.
+
+\bibitem{ConnesConsani2021}
+A.~Connes and C.~Consani,
+\newblock Weil positivity and trace formula, the archimedean place,
+\newblock \emph{Selecta Math. (N.S.)} \textbf{27} (2021), article 77.
+\newblock \url{https://doi.org/10.1007/s00029-021-00689-4}.
+
+\bibitem{ConnesConsani2023}
+A.~Connes and C.~Consani,
+\newblock Spectral triples and \(\zeta\)-cycles,
+\newblock \emph{Enseign. Math.} \textbf{69} (2023), 93--148.
+\newblock \url{https://doi.org/10.4171/LEM/1049}.
+
+\bibitem{Suzuki2023}
+M.~Suzuki,
+\newblock Aspects of the screw function corresponding to the Riemann
+zeta-function,
+\newblock \emph{J. Lond. Math. Soc.} \textbf{108} (2023), 1448--1487.
+\newblock \url{https://doi.org/10.1112/jlms.12785}.
+
+\bibitem{Suzuki2026}
+M.~Suzuki,
+\newblock Weil's quadratic form via the screw function,
+\newblock arXiv:2606.09096 (2026).
+\newblock \url{https://arxiv.org/abs/2606.09096}.
+
+\bibitem{KimEtAl2026}
+T.~Kim, Y.~Hong, M.~Kim, S.~Choi, J.~Jang, and M.~Kim,
+\newblock A numerical realization of Suzuki's Weil-quadratic-form operator:
+the archimedean spectral law, its universality, and an operator form of
+Weil's positivity criterion,
+\newblock arXiv:2607.24830v2 (2026).
+\newblock \url{https://arxiv.org/abs/2607.24830}.
+
+\bibitem{Groskin2026}
+A.~Groskin,
+\newblock A finite Guinand--Weil dictionary and archimedean tail order for
+the truncated Weil quadratic form,
+\newblock arXiv:2607.02828 (2026).
+\newblock \url{https://arxiv.org/abs/2607.02828}.
+
+\bibitem{Douglas1966}
+R.~G. Douglas,
+\newblock On majorization, factorization, and range inclusion of operators
+on Hilbert space,
+\newblock \emph{Proc. Amer. Math. Soc.} \textbf{17} (1966), 413--415.
+\newblock \url{https://doi.org/10.1090/S0002-9939-1966-0203464-1}.
+
+\bibitem{AndersonTrapp1975}
+W.~N. Anderson, Jr. and G.~E. Trapp,
+\newblock Shorted operators II,
+\newblock \emph{SIAM J. Appl. Math.} \textbf{28} (1975), 60--71.
+\newblock \url{https://doi.org/10.1137/0128007}.
+
+\bibitem{Kato1995}
+T.~Kato,
+\newblock \emph{Perturbation Theory for Linear Operators},
+\newblock Classics in Mathematics, Springer, Berlin, 1995.
+\newblock \url{https://doi.org/10.1007/978-3-642-66282-9}.
+
+\bibitem{Johansson2017Arb}
+F.~Johansson,
+\newblock Arb: efficient arbitrary-precision midpoint-radius interval
+arithmetic,
+\newblock \emph{IEEE Trans. Comput.} \textbf{66} (2017), 1281--1292.
+\newblock \url{https://doi.org/10.1109/TC.2017.2690633}.
+
+\end{thebibliography}
+
+\end{document}

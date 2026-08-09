@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+build/
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+.DS_Store
+Thumbs.db
+*.fls
+*.fdb_latexmk

@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.pdf binary
+
+# The interval ledger is one enormous machine-written line; diffs are useless.
+certificate/full_rescue_rank44_interval_a0600_2026-08-09.json -diff
