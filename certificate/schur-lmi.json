@@ -1,0 +1,24 @@
+{
+  "status": "rigorous 256-bit Arb post-processing certificate",
+  "input_ledger": "ledger.json",
+  "input_ledger_sha256": "03E81FCA545D184ED320B79E6576ECA773976C274C134FBA0C0859D170E4A4B4",
+  "input_proof_payload_sha256": "950A5E6D261E548A40AB776D15F67741660A9786614E6B000B0CD493378A2285",
+  "postprocess_precision_bits": 256,
+  "rank": 44,
+  "eta": "1/16",
+  "lambda": "99997/100000",
+  "tau_A_upper_endpoint": "[4.25612141509751317883726432646393221439487887017262018046502e-6 +/- 5.45e-67]",
+  "tau_C_upper_endpoint": "[1.45779440098203697842698353703046881824079150646866764873266e-6 +/- 2.22e-66]",
+  "adverse_root_operator_error_upper_endpoint": "[8.25059224988385420625893429323114452786638803518526230307908e-19 +/- 4.90e-79]",
+  "minimum_LDL_pivot_lower": "[0.00979334885665161017144881429060939458575506378907128107483419 +/- 1.03e-64]",
+  "coercive_reserve": "3/100000",
+  "coercive_reserve_decimal": "[3.00000000000000000000000000000000000000000000000000000000000e-5 +/- 1e-69]",
+  "theorem": "At a=3/5 on the complex-even cosh(x/2)-moment-null closed form domain, the exact n=2,3 compact-support Weil form is bounded below by (3/100000) times the L2 identity.",
+  "proof_logic": [
+    "The certified ledger encloses G, the adverse core compression, the retained rescue compression, both complement traces, and the adverse root trace error.",
+    "For B>=0, (QBP)^*(QBP) <= ||QBQ|| PBP <= Tr(QBQ) PBP.",
+    "Matrix Young bounds the signed cross residual Q(A-C)P without replacing PAP and PCP by scalar norms.",
+    "The displayed interval LDL positivity is the Schur sufficient condition A-C <= lambda I.",
+    "The exact full Weil form dominates I-(A-C), giving reserve 1-lambda=3/100000."
+  ]
+}
