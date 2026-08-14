@@ -5,7 +5,7 @@ type: software
 authors:
   - family-names: "Thota"
     given-names: "Sharan"
-version: 1.0.1
+version: 1.0.2
 date-released: 2026-08-14
 repository-code: "https://github.com/sharantresearch-ops/certified-local-weil-positivity"
-url: "https://github.com/sharantresearch-ops/certified-local-weil-positivity/tree/v1.0.1"
+url: "https://github.com/sharantresearch-ops/certified-local-weil-positivity/tree/v1.0.2"
