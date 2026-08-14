@@ -60,11 +60,12 @@ which is equivalent to the Riemann hypothesis, is not asserted.
 \end{abstract}
 
 \medskip
-\noindent\textbf{2020 Mathematics Subject Classification.} 11M26, 47A07, 47B65, 65G40.
+\noindent\textbf{2020 Mathematics Subject Classification.} 65G40, 47A07, 47B65, 11M26.
 
 \smallskip
-\noindent\textbf{Keywords.} Weil's criterion, Riemann zeta function,
-localized quadratic form, validated numerics, interval arithmetic, Poisson frame, Schur complement.
+\noindent\textbf{Keywords.} Validated numerics, interval arithmetic,
+localized quadratic form, Schur complement, Poisson frame,
+Weil's criterion, Riemann zeta function.
 
 \section{Introduction}
 \label{pub-sec-introduction}
@@ -113,7 +114,8 @@ such a use would have the wrong variational direction.
 The connection with the Riemann hypothesis is contextual rather than a claim of this paper.
 Weil's positivity criterion, in its localized Hermitian-form version,
 identifies the Riemann hypothesis with positivity for every support radius.
-Theorem~\ref{pub-thm-main} supplies one explicit initial interval of radii and therefore does not settle the all-radius problem.
+Theorem~\ref{pub-thm-main} supplies one explicit initial interval of radii and therefore does not settle the all-radius problem;
+the precise statement is recorded in Section~\ref{pub-sec-conclusion}.
 
 The localization of Weil's quadratic form was initiated by Yoshida,
 who proved positivity for sufficiently small support and reduced the problem to finite calculations on suitable localized spaces.
@@ -129,19 +131,18 @@ This comparison is restricted to that sector;
 it does not concern Suzuki's unrestricted localized operator or the all-radius problem.
 
 The paper is organized as follows.
-Section~\ref{pub-sec-weil-form} fixes the Fourier normalization, form domain, and all-radius criterion.
+Section~\ref{pub-sec-weil-form} fixes the Fourier normalization and the form domain.
 Section~\ref{pub-sec-cosine-frame} gives the exact projected cosine kernel.
 Section~\ref{pub-sec-rescue} proves the abstract positive-rescue estimates.
 Section~\ref{pub-sec-certificate} gives the complete theorem-bearing certificate at \(a=3/5\).
 Section~\ref{pub-sec-nesting} proves inward nesting,
 Section~\ref{pub-sec-poisson-frame} gives the exact grouped Poisson frame,
 and Section~\ref{pub-sec-shorting} records the shorted-form consequence.
+Section~\ref{pub-sec-conclusion} records the all-radius criterion that delimits the scope of the result.
 Reproduction data appear in Appendix~\ref{pub-sec-reproduction}.
 
 \section{The local Weil form}
 \label{pub-sec-weil-form}
-
-\subsection{Fourier normalization and the moment constraint}
 
 Write \(I_a=(-a,a)\), and identify every function on \(I_a\) with its zero extension to \(\mathbb R\).
 We use
@@ -194,45 +195,6 @@ On this domain define
 The form is densely defined, closed, and bounded below.
 Including an atom with \(\log n=2a\) does not alter the compressed form:
 the corresponding translation meets the support only on a null set.
-
-\subsection{The all-radius criterion}
-
-The following proposition fixes the precise relation between the local problem and the classical Weil criterion.
-It is included to delimit the scope of Theorem~\ref{pub-thm-main}.
-
-\begin{proposition}[Even local Weil criterion]
-\label{pub-prop-rh-equivalence}
-The Riemann hypothesis is equivalent to
-\begin{equation}
- T_a[f]\geq0
- \quad\text{for every }a>0\text{ and every }f\in\mathcal Q_a^0.
- \label{pub-eq-rh-all-radius}
-\end{equation}
-It is enough to quantify over smooth functions compactly supported in \(I_a\) and satisfying the moment condition.
-\end{proposition}
-
-\begin{proof}
-In the compact-support explicit formula of Weil and Yoshida \cite{Weil1952,Yoshida1992},
-the non-pole Fourier multiplier is exactly \eqref{pub-eq-symbol-intro}.
-Equation \eqref{pub-eq-two-poles-one-moment} removes the two pole evaluations.
-Under the Riemann hypothesis,
-the zero side of the Hermitian form is a sum of nonnegative squares,
-which proves \eqref{pub-eq-rh-all-radius}.
-
-Conversely, the localized interpolation theorem for the Weil form allows one to prescribe the pole zeros and to isolate an off-critical zero orbit.
-After conjugation and even symmetrization,
-an off-line quartet yields a negative real-even test,
-while the other zero evaluations can be made arbitrarily small.
-The resulting Paley--Wiener function has some finite exponential type and therefore comes from a test supported in \((-a,a)\) for a finite \(a\).
-This contradicts \eqref{pub-eq-rh-all-radius}.
-Density of the smooth moment-null core in \(\mathcal Q_a^0\) gives the closed-form statement.
-See \cite{Yoshida1992,Bombieri2000} for the localized Hermitian form and interpolation formulation.
-\end{proof}
-
-\begin{remark}
-Proposition~\ref{pub-prop-rh-equivalence} quantifies over all \(a>0\).
-No converse from positivity on a single bounded interval of radii is used or claimed.
-\end{remark}
 
 \section{Projected cosine frames}
 \label{pub-sec-cosine-frame}
@@ -405,7 +367,7 @@ Let \(A\succeq0\) be compact, let \(D\) be a closed positive form,
 and let \(C_R\succeq0\) be compact operators increasing monotonically to \(D\) in form sense.
 Define
 \begin{equation}
- s_*=sup_{\substack{f\in\Dom D^{1/2}\\\lVert f\rVert=1}}
+ s_*=\sup_{\substack{f\in\Dom D^{1/2}\\\lVert f\rVert=1}}
        \bigl(\langle Af,f\rangle-D[f]\bigr),
  \qquad
  \lambda_R=\sup\sigma(A-C_R).
@@ -855,8 +817,44 @@ a sufficiently large bounded rescue and finite projector can in principle detect
 
 Neither result is uniform in the support radius.
 Extending the theorem to all \(a>0\) would require new arithmetic control as further prime-power atoms enter and the low-energy subspace grows.
-By Proposition~\ref{pub-prop-rh-equivalence},
-that all-radius extension is an RH-level problem.
+The following statement, classical in substance and recorded here only to
+delimit the scope of Theorem~\ref{pub-thm-main},
+identifies that extension as an RH-level problem.
+
+\begin{proposition}[Even local Weil criterion]
+\label{pub-prop-rh-equivalence}
+The Riemann hypothesis is equivalent to
+\begin{equation}
+ T_a[f]\geq0
+ \quad\text{for every }a>0\text{ and every }f\in\mathcal Q_a^0.
+ \label{pub-eq-rh-all-radius}
+\end{equation}
+It is enough to quantify over smooth functions compactly supported in \(I_a\) and satisfying the moment condition.
+\end{proposition}
+
+\begin{proof}
+In the compact-support explicit formula of Weil and Yoshida \cite{Weil1952,Yoshida1992},
+the non-pole Fourier multiplier is exactly \eqref{pub-eq-symbol-intro}.
+Equation \eqref{pub-eq-two-poles-one-moment} removes the two pole evaluations.
+Under the Riemann hypothesis,
+the zero side of the Hermitian form is a sum of nonnegative squares,
+which proves \eqref{pub-eq-rh-all-radius}.
+
+Conversely, the localized interpolation theorem for the Weil form allows one to prescribe the pole zeros and to isolate an off-critical zero orbit.
+After conjugation and even symmetrization,
+an off-line quartet yields a negative real-even test,
+while the other zero evaluations can be made arbitrarily small.
+The resulting Paley--Wiener function has some finite exponential type and therefore comes from a test supported in \((-a,a)\) for a finite \(a\).
+This contradicts \eqref{pub-eq-rh-all-radius}.
+Density of the smooth moment-null core in \(\mathcal Q_a^0\) gives the closed-form statement.
+See \cite{Yoshida1992,Bombieri2000} for the localized Hermitian form and interpolation formulation.
+\end{proof}
+
+\begin{remark}
+Proposition~\ref{pub-prop-rh-equivalence} quantifies over all \(a>0\).
+No converse from positivity on a single bounded interval of radii is used or
+claimed, and no assertion about the all-radius problem is made in this paper.
+\end{remark}
 
 \appendix
 
